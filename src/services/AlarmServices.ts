@@ -6,7 +6,7 @@ import AlarmTypes from "./AlarmTypes";
 
 const ENDPOINT_TO_ALARM_RELATION = "hasAlarm";
 
-const ALARM_CONTEXT_NAME = "AlarmContext"; // ".AlarmContext" pour le rendre invisible
+const ALARM_CONTEXT_NAME = ".AlarmContext"; // ".AlarmContext" pour le rendre invisible
 const MIN_ALARM_TYPES_RELATION = "hasMinAlarm";
 const MAX_ALARM_TYPES_RELATION = "hasMaxAlarm";
 const NORMAL_ALARM_TYPES_RELATION = "hasNormalAlarm";
