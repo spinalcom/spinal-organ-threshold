@@ -61,7 +61,7 @@ class Main {
 
       if (
         typeof context === "undefined" ||
-        !context.hasRelation(ENDPOINT_RELATION)
+        !context.hasRelation(ENDPOINT_RELATION, SPINAL_RELATION_PTR_LST_TYPE)
       ) {
         return;
       }
