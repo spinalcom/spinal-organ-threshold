@@ -4,23 +4,22 @@ import {
 } from "spinal-env-viewer-graph-service";
 import AlarmTypes from "./AlarmTypes";
 
-const ENDPOINT_TO_ALARM_RELATION = "hasAlarm";
-
-const ALARM_CONTEXT_NAME = ".AlarmContext"; // ".AlarmContext" pour le rendre invisible
-const MIN_ALARM_TYPES_RELATION = "hasMinAlarm";
-const MAX_ALARM_TYPES_RELATION = "hasMaxAlarm";
-const NORMAL_ALARM_TYPES_RELATION = "hasNormalAlarm";
-
 class AlarmService {
+  ALARM_CONTEXT_NAME: string = ".AlarmContext"; // ".AlarmContext" pour le rendre invisible
+  MIN_ALARM_TYPES_RELATION: string = "hasMinAlarm";
+  MAX_ALARM_TYPES_RELATION: string = "hasMaxAlarm";
+  NORMAL_ALARM_TYPES_RELATION: string = "hasNormalAlarm";
+  ENDPOINT_TO_ALARM_RELATION: string = "hasAlarm";
+
   constructor() {
     // this.createContextIfNotExist();
   }
 
   createContextIfNotExist(): Promise<spinal.Model> {
-    let context = SpinalGraphService.getContext(ALARM_CONTEXT_NAME);
+    let context = SpinalGraphService.getContext(this.ALARM_CONTEXT_NAME);
 
     if (typeof context === "undefined") {
-      return SpinalGraphService.addContext(ALARM_CONTEXT_NAME);
+      return SpinalGraphService.addContext(this.ALARM_CONTEXT_NAME);
     }
     return Promise.resolve(context);
   }
@@ -35,13 +34,13 @@ class AlarmService {
       let relationName = "hasNormalAlarm";
       switch (alarmType) {
         case AlarmTypes.maxThreshold:
-          relationName = MAX_ALARM_TYPES_RELATION;
+          relationName = this.MAX_ALARM_TYPES_RELATION;
           break;
         case AlarmTypes.minThreshold:
-          relationName = MIN_ALARM_TYPES_RELATION;
+          relationName = this.MIN_ALARM_TYPES_RELATION;
           break;
         case AlarmTypes.normal:
-          relationName = NORMAL_ALARM_TYPES_RELATION;
+          relationName = this.NORMAL_ALARM_TYPES_RELATION;
           break;
       }
 
@@ -49,7 +48,7 @@ class AlarmService {
         endpointId,
         alarmId,
         contextId,
-        ENDPOINT_TO_ALARM_RELATION,
+        this.ENDPOINT_TO_ALARM_RELATION,
         SPINAL_RELATION_PTR_LST_TYPE
       ).then(el => {
         if (el) {
@@ -69,4 +68,4 @@ class AlarmService {
 
 const alarmService = new AlarmService();
 
-export { alarmService, ALARM_CONTEXT_NAME, AlarmTypes };
+export { alarmService, AlarmTypes };

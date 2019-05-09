@@ -2,9 +2,10 @@
   "name": "spinal-organ-threshold",
   "version": "1.0.1",
   "description": "",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "npm run build && node dist/index.js > text.txt"
+    "start": "npm run build && node dist/run.js > text.txt"
   },
   "keywords": [],
   "author": "",

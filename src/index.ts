@@ -12,7 +12,7 @@ import {
 } from "spinal-env-viewer-graph-service";
 
 import SpinalEndpoint from "./classes/SpinalEndpoint";
-import { alarmService, ALARM_CONTEXT_NAME } from "./services/AlarmServices";
+import { alarmService } from "./services/AlarmServices";
 
 class Main {
   url: string;
@@ -100,6 +100,5 @@ class Main {
   }
 }
 
-let main = new Main();
-
-export { alarmService, ALARM_CONTEXT_NAME };
+export { alarmService };
+export default Main;
