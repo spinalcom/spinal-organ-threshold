@@ -19,6 +19,8 @@ class Main {
   filePath: string;
   nodeMap: Map<string, SpinalEndpoint> = new Map();
 
+  relationBindProcess: spinal.Process;
+
   constructor() {
     this.url = `http://${config.user}:${config.password}@${config.host}:${
       config.port
@@ -57,9 +59,12 @@ class Main {
 
       let context = SpinalGraphService.getContext(ENDPOINT_CONTEXT_NAME);
 
-      console.log("context", context);
-
-      if (typeof context === "undefined") return;
+      if (
+        typeof context === "undefined" ||
+        !context.hasRelation(ENDPOINT_RELATION)
+      ) {
+        return;
+      }
 
       return context._getRelation(
         ENDPOINT_RELATION,
