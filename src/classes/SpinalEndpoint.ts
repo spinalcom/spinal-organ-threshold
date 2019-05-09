@@ -15,8 +15,6 @@ import { AlarmTypes } from "../services/AlarmServices";
 
 import { alarmService } from "../services/AlarmServices";
 
-const ENDPOINT_TO_ALARM_RELATION = "hasAlarm";
-
 export default class SpinalEndpoint {
   endpoint: any;
   threshold: any;
@@ -105,14 +103,7 @@ export default class SpinalEndpoint {
         this.alarm
       );
 
-      SpinalGraphService.addChild(
-        this.node.id.get(),
-        alarmNodeId,
-        ENDPOINT_TO_ALARM_RELATION,
-        SPINAL_RELATION_PTR_LST_TYPE
-      );
-
-      alarmService.addToContext(alarmNodeId, alarmType);
+      alarmService.addToContext(this.node.id.get(), alarmNodeId, alarmType);
     }
   }
 }

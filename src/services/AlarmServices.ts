@@ -4,7 +4,9 @@ import {
 } from "spinal-env-viewer-graph-service";
 import AlarmTypes from "./AlarmTypes";
 
-const ALARM_CONTEXT_NAME = ".AlarmContext";
+const ENDPOINT_TO_ALARM_RELATION = "hasAlarm";
+
+const ALARM_CONTEXT_NAME = "AlarmContext"; // ".AlarmContext" pour le rendre invisible
 const MIN_ALARM_TYPES_RELATION = "hasMinAlarm";
 const MAX_ALARM_TYPES_RELATION = "hasMaxAlarm";
 const NORMAL_ALARM_TYPES_RELATION = "hasNormalAlarm";
@@ -23,8 +25,13 @@ class AlarmService {
     return Promise.resolve(context);
   }
 
-  addToContext(alarmId: string, alarmType: any): Promise<boolean> {
+  addToContext(
+    endpointId: string,
+    alarmId: string,
+    alarmType: any
+  ): Promise<boolean> {
     return this.createContextIfNotExist().then(context => {
+      let contextId = context.info.id.get();
       let relationName = "hasNormalAlarm";
       switch (alarmType) {
         case AlarmTypes.maxThreshold:
@@ -38,12 +45,24 @@ class AlarmService {
           break;
       }
 
-      return SpinalGraphService.addChild(
-        context.info.id.get(),
+      return SpinalGraphService.addChildInContext(
+        endpointId,
         alarmId,
-        relationName,
+        contextId,
+        ENDPOINT_TO_ALARM_RELATION,
         SPINAL_RELATION_PTR_LST_TYPE
-      );
+      ).then(el => {
+        if (el) {
+          return SpinalGraphService.addChildInContext(
+            contextId,
+            endpointId,
+            contextId,
+            relationName,
+            SPINAL_RELATION_PTR_LST_TYPE
+          );
+        }
+        return false;
+      });
     });
   }
 }
