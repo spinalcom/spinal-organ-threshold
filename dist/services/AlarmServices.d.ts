@@ -8,6 +8,7 @@ declare class AlarmService {
     constructor();
     createContextIfNotExist(): Promise<spinal.Model>;
     addToContext(endpointId: string, alarmId: string, alarmType: any): Promise<boolean>;
+    _addToRelation(contextId: string, endpointId: string, alarmId: string, relationName: string): Promise<any>;
 }
 declare const alarmService: AlarmService;
 export { alarmService, AlarmTypes };

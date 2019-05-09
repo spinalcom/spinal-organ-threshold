@@ -31,7 +31,8 @@ class AlarmService {
   ): Promise<boolean> {
     return this.createContextIfNotExist().then(context => {
       let contextId = context.info.id.get();
-      let relationName = "hasNormalAlarm";
+      let relationName = this.NORMAL_ALARM_TYPES_RELATION;
+
       switch (alarmType) {
         case AlarmTypes.maxThreshold:
           relationName = this.MAX_ALARM_TYPES_RELATION;
@@ -44,14 +45,30 @@ class AlarmService {
           break;
       }
 
-      return SpinalGraphService.addChildInContext(
-        endpointId,
-        alarmId,
-        contextId,
-        this.ENDPOINT_TO_ALARM_RELATION,
-        SPINAL_RELATION_PTR_LST_TYPE
-      ).then(el => {
-        if (el) {
+      return this._addToRelation(contextId, endpointId, alarmId, relationName);
+    });
+  }
+
+  _addToRelation(
+    contextId: string,
+    endpointId: string,
+    alarmId: string,
+    relationName: string
+  ) {
+    return SpinalGraphService.addChildInContext(
+      endpointId,
+      alarmId,
+      contextId,
+      this.ENDPOINT_TO_ALARM_RELATION,
+      SPINAL_RELATION_PTR_LST_TYPE
+    ).then(el => {
+      if (el) {
+        return SpinalGraphService.getChildren(contextId, []).then(children => {
+          for (let index = 0; index < children.length; index++) {
+            const elementId = children[index].id.get();
+            if (elementId === endpointId) return;
+          }
+
           return SpinalGraphService.addChildInContext(
             contextId,
             endpointId,
@@ -59,9 +76,9 @@ class AlarmService {
             relationName,
             SPINAL_RELATION_PTR_LST_TYPE
           );
-        }
-        return false;
-      });
+        });
+      }
+      return false;
     });
   }
 }
