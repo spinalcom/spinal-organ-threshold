@@ -21,6 +21,10 @@ class SpinalEndpoint {
         return __awaiter(this, void 0, void 0, function* () {
             this.threshold = yield service_1.thresholdService.getThreshold(node.id.get());
             this.endpoint = yield node.element.load();
+            this.alarm = yield this._getLastAlarm();
+            if (this.alarm) {
+                this.alarmType = this.alarm.alarmType.get();
+            }
         });
     }
     bindElement() {
@@ -46,15 +50,12 @@ class SpinalEndpoint {
             : undefined;
         let value = this.endpoint.currentValue.get();
         if (min && value <= min) {
-            console.log("valeur inferieure à min");
             return AlarmServices_1.AlarmTypes.minThreshold;
         }
         else if (max && value >= max) {
-            console.log("valeur superireure à max");
             return AlarmServices_1.AlarmTypes.maxThreshold;
         }
         else {
-            console.log("valeur normale");
             return AlarmServices_1.AlarmTypes.normal;
         }
     }
@@ -82,6 +83,14 @@ class SpinalEndpoint {
             }, this.alarm);
             AlarmServices_2.alarmService.addToContext(this.node.id.get(), alarmNodeId, alarmType);
         }
+    }
+    _getLastAlarm() {
+        let id = this.node.id.get();
+        return AlarmServices_2.alarmService.getAllAlarm(id).then(children => {
+            if (children.length === 0)
+                return;
+            return children[children.length - 1].element.load();
+        });
     }
 }
 exports.default = SpinalEndpoint;

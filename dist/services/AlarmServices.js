@@ -37,6 +37,11 @@ class AlarmService {
             return this._addToRelation(contextId, endpointId, alarmId, relationName);
         });
     }
+    getAllAlarm(nodeId) {
+        return spinal_env_viewer_graph_service_1.SpinalGraphService.getChildren(nodeId, [
+            this.ENDPOINT_TO_ALARM_RELATION
+        ]);
+    }
     _addToRelation(contextId, endpointId, alarmId, relationName) {
         return spinal_env_viewer_graph_service_1.SpinalGraphService.addChildInContext(endpointId, alarmId, contextId, this.ENDPOINT_TO_ALARM_RELATION, spinal_env_viewer_graph_service_1.SPINAL_RELATION_PTR_LST_TYPE).then(el => {
             if (el) {

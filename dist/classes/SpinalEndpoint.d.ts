@@ -13,4 +13,5 @@ export default class SpinalEndpoint {
     getAlarmType(): any;
     unBindElement(): void;
     bindMethod(): void;
+    _getLastAlarm(): Promise<any>;
 }

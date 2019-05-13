@@ -31,6 +31,11 @@ export default class SpinalEndpoint {
   async init(node: spinal.Model) {
     this.threshold = await thresholdService.getThreshold(node.id.get());
     this.endpoint = await node.element.load();
+    this.alarm = await this._getLastAlarm();
+
+    if (this.alarm) {
+      this.alarmType = this.alarm.alarmType.get();
+    }
   }
 
   bindElement(): void {
@@ -61,14 +66,10 @@ export default class SpinalEndpoint {
     let value = this.endpoint.currentValue.get();
 
     if (min && value <= min) {
-      console.log("valeur inferieure à min");
       return AlarmTypes.minThreshold;
     } else if (max && value >= max) {
-      console.log("valeur superireure à max");
       return AlarmTypes.maxThreshold;
     } else {
-      console.log("valeur normale");
-
       return AlarmTypes.normal;
     }
   }
@@ -105,5 +106,14 @@ export default class SpinalEndpoint {
 
       alarmService.addToContext(this.node.id.get(), alarmNodeId, alarmType);
     }
+  }
+
+  _getLastAlarm(): Promise<any> {
+    let id = this.node.id.get();
+    return alarmService.getAllAlarm(id).then(children => {
+      if (children.length === 0) return;
+
+      return children[children.length - 1].element.load();
+    });
   }
 }

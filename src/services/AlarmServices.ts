@@ -49,6 +49,12 @@ class AlarmService {
     });
   }
 
+  getAllAlarm(nodeId: string): Promise<any> {
+    return SpinalGraphService.getChildren(nodeId, [
+      this.ENDPOINT_TO_ALARM_RELATION
+    ]);
+  }
+
   _addToRelation(
     contextId: string,
     endpointId: string,
