@@ -10,6 +10,9 @@ declare class AlarmService {
     addToContext(endpointId: string, alarmId: string, alarmType: any): Promise<boolean>;
     getAllAlarm(nodeId: string): Promise<any>;
     _addToRelation(contextId: string, endpointId: string, alarmId: string, relationName: string): Promise<any>;
+    isInAlarm(nodeId: string): boolean;
+    activeAlarm(nodeId: string): void;
+    disableAlarm(nodeId: string): void;
 }
 declare const alarmService: AlarmService;
 export { alarmService, AlarmTypes };

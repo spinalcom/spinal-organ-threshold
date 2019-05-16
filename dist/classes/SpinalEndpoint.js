@@ -14,8 +14,9 @@ const AlarmModel_1 = require("../models/AlarmModel");
 const AlarmServices_1 = require("../services/AlarmServices");
 const AlarmServices_2 = require("../services/AlarmServices");
 class SpinalEndpoint {
-    constructor(node) {
+    constructor(node, context) {
         this.node = node;
+        this.alarmContext = context;
     }
     init(node) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -50,12 +51,18 @@ class SpinalEndpoint {
             : undefined;
         let value = this.endpoint.currentValue.get();
         if (min && value <= min) {
+            AlarmServices_2.alarmService.activeAlarm(this.node.id.get()); //activer l'alarme
+            this._addToInAlarmList();
             return AlarmServices_1.AlarmTypes.minThreshold;
         }
         else if (max && value >= max) {
+            AlarmServices_2.alarmService.activeAlarm(this.node.id.get()); //activer l'alarme
+            this._addToInAlarmList();
             return AlarmServices_1.AlarmTypes.maxThreshold;
         }
         else {
+            AlarmServices_2.alarmService.disableAlarm(this.node.id.get()); // desactiver l'alarme
+            this._removeToInAlarmList();
             return AlarmServices_1.AlarmTypes.normal;
         }
     }
@@ -91,6 +98,31 @@ class SpinalEndpoint {
                 return;
             return children[children.length - 1].element.load();
         });
+    }
+    _addToInAlarmList() {
+        if (this.alarmContext && this.alarmContext.info.inAlarmList) {
+            for (let index = 0; index < this.alarmContext.info.inAlarmList.length; index++) {
+                const element = this.alarmContext.info.inAlarmList[index];
+                if (element.get() === this.node.id.get())
+                    return;
+            }
+            this.alarmContext.info.inAlarmList.push(this.node.id.get());
+        }
+        else {
+            this.alarmContext.info.add_attr({
+                inAlarmList: [this.node.id.get()]
+            });
+        }
+    }
+    _removeToInAlarmList() {
+        if (this.alarmContext && this.alarmContext.info.inAlarmList) {
+            for (let index = 0; index < this.alarmContext.info.inAlarmList.length; index++) {
+                const element = this.alarmContext.info.inAlarmList[index];
+                if (element.get() === this.node.id.get()) {
+                    this.alarmContext.info.inAlarmList.splice(index, 1);
+                }
+            }
+        }
     }
 }
 exports.default = SpinalEndpoint;

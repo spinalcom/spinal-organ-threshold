@@ -7,11 +7,14 @@ export default class SpinalEndpoint {
     tempModel: spinal.Model;
     alarmType: any;
     alarm: AlarmModel;
-    constructor(node: spinal.Model);
+    alarmContext: spinal.Model;
+    constructor(node: spinal.Model, context: spinal.Model);
     init(node: spinal.Model): Promise<void>;
     bindElement(): void;
     getAlarmType(): any;
     unBindElement(): void;
     bindMethod(): void;
     _getLastAlarm(): Promise<any>;
+    _addToInAlarmList(): void;
+    _removeToInAlarmList(): void;
 }

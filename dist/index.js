@@ -51,6 +51,7 @@ class Main {
                     !context.hasRelation(service_1.ENDPOINT_RELATION, spinal_env_viewer_graph_service_1.SPINAL_RELATION_PTR_LST_TYPE)) {
                     return;
                 }
+                this.context = context;
                 return context._getRelation(service_1.ENDPOINT_RELATION, spinal_env_viewer_graph_service_1.SPINAL_RELATION_PTR_LST_TYPE).children;
             }
             else {
@@ -66,7 +67,7 @@ class Main {
                 if (typeof this.nodeMap.get(id) === "undefined") {
                     spinal_env_viewer_graph_service_1.SpinalGraphService._addNode(node);
                     let info = spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(id);
-                    let spinalEndpoint = new SpinalEndpoint_1.default(info);
+                    let spinalEndpoint = new SpinalEndpoint_1.default(info, this.context);
                     yield spinalEndpoint.init(info);
                     this.nodeMap.set(id, spinalEndpoint);
                 }

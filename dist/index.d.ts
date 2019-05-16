@@ -4,6 +4,7 @@ declare class Main {
     url: string;
     filePath: string;
     nodeMap: Map<string, SpinalEndpoint>;
+    context: any;
     relationBindProcess: spinal.Process;
     constructor();
     getGraph(_file: any): any;

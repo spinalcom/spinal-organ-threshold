@@ -57,6 +57,35 @@ class AlarmService {
             return false;
         });
     }
+    isInAlarm(nodeId) {
+        let node = spinal_env_viewer_graph_service_1.SpinalGraphService.getRealNode(nodeId);
+        if (node.info.isInAlarm && node.info.isInAlarm.get() === true) {
+            return true;
+        }
+        return false;
+    }
+    activeAlarm(nodeId) {
+        let alarm = spinal_env_viewer_graph_service_1.SpinalGraphService.getRealNode(nodeId);
+        if (typeof alarm.info.isInAlarm !== "undefined") {
+            alarm.info.isInAlarm.set(true);
+        }
+        else {
+            alarm.info.add_attr({
+                isInAlarm: true
+            });
+        }
+    }
+    disableAlarm(nodeId) {
+        let alarm = spinal_env_viewer_graph_service_1.SpinalGraphService.getRealNode(nodeId);
+        if (typeof alarm.info.isInAlarm !== "undefined") {
+            alarm.info.isInAlarm.set(false);
+        }
+        else {
+            alarm.info.add_attr({
+                isInAlarm: false
+            });
+        }
+    }
 }
 const alarmService = new AlarmService();
 exports.alarmService = alarmService;

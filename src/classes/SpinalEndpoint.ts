@@ -23,9 +23,11 @@ export default class SpinalEndpoint {
   tempModel: spinal.Model;
   alarmType: any;
   alarm: AlarmModel;
+  alarmContext: spinal.Model;
 
-  constructor(node: spinal.Model) {
+  constructor(node: spinal.Model, context: spinal.Model) {
     this.node = node;
+    this.alarmContext = context;
   }
 
   async init(node: spinal.Model) {
@@ -66,10 +68,16 @@ export default class SpinalEndpoint {
     let value = this.endpoint.currentValue.get();
 
     if (min && value <= min) {
+      alarmService.activeAlarm(this.node.id.get()); //activer l'alarme
+      this._addToInAlarmList();
       return AlarmTypes.minThreshold;
     } else if (max && value >= max) {
+      alarmService.activeAlarm(this.node.id.get()); //activer l'alarme
+      this._addToInAlarmList();
       return AlarmTypes.maxThreshold;
     } else {
+      alarmService.disableAlarm(this.node.id.get()); // desactiver l'alarme
+      this._removeToInAlarmList();
       return AlarmTypes.normal;
     }
   }
@@ -115,5 +123,39 @@ export default class SpinalEndpoint {
 
       return children[children.length - 1].element.load();
     });
+  }
+
+  _addToInAlarmList() {
+    if (this.alarmContext && this.alarmContext.info.inAlarmList) {
+      for (
+        let index = 0;
+        index < this.alarmContext.info.inAlarmList.length;
+        index++
+      ) {
+        const element = this.alarmContext.info.inAlarmList[index];
+        if (element.get() === this.node.id.get()) return;
+      }
+
+      this.alarmContext.info.inAlarmList.push(this.node.id.get());
+    } else {
+      this.alarmContext.info.add_attr({
+        inAlarmList: [this.node.id.get()]
+      });
+    }
+  }
+
+  _removeToInAlarmList() {
+    if (this.alarmContext && this.alarmContext.info.inAlarmList) {
+      for (
+        let index = 0;
+        index < this.alarmContext.info.inAlarmList.length;
+        index++
+      ) {
+        const element = this.alarmContext.info.inAlarmList[index];
+        if (element.get() === this.node.id.get()) {
+          this.alarmContext.info.inAlarmList.splice(index, 1);
+        }
+      }
+    }
   }
 }

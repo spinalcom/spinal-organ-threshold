@@ -18,6 +18,7 @@ class Main {
   url: string;
   filePath: string;
   nodeMap: Map<string, SpinalEndpoint> = new Map();
+  context: any;
 
   relationBindProcess: spinal.Process;
 
@@ -66,6 +67,8 @@ class Main {
         return;
       }
 
+      this.context = context;
+
       return context._getRelation(
         ENDPOINT_RELATION,
         SPINAL_RELATION_PTR_LST_TYPE
@@ -84,7 +87,7 @@ class Main {
         if (typeof this.nodeMap.get(id) === "undefined") {
           (<any>SpinalGraphService)._addNode(node);
           let info = SpinalGraphService.getInfo(id);
-          let spinalEndpoint = new SpinalEndpoint(info);
+          let spinalEndpoint = new SpinalEndpoint(info, this.context);
           await spinalEndpoint.init(info);
           this.nodeMap.set(id, spinalEndpoint);
         }

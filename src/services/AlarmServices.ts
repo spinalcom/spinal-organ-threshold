@@ -87,6 +87,39 @@ class AlarmService {
       return false;
     });
   }
+
+  isInAlarm(nodeId: string): boolean {
+    let node = SpinalGraphService.getRealNode(nodeId);
+
+    if (node.info.isInAlarm && node.info.isInAlarm.get() === true) {
+      return true;
+    }
+    return false;
+  }
+
+  activeAlarm(nodeId: string): void {
+    let alarm = SpinalGraphService.getRealNode(nodeId);
+
+    if (typeof alarm.info.isInAlarm !== "undefined") {
+      alarm.info.isInAlarm.set(true);
+    } else {
+      alarm.info.add_attr({
+        isInAlarm: true
+      });
+    }
+  }
+
+  disableAlarm(nodeId: string): void {
+    let alarm = SpinalGraphService.getRealNode(nodeId);
+
+    if (typeof alarm.info.isInAlarm !== "undefined") {
+      alarm.info.isInAlarm.set(false);
+    } else {
+      alarm.info.add_attr({
+        isInAlarm: false
+      });
+    }
+  }
 }
 
 const alarmService = new AlarmService();
